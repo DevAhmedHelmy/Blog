@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Site;
 
-use App\Post;
+use App\Like;
 use Illuminate\Http\Request;
 
-class PostController extends Controller
+class LikeController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,9 +14,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::paginate(5);
-
-        return view('site.index',compact('posts'));
+        //
     }
 
     /**
@@ -43,10 +41,10 @@ class PostController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Post  $post
+     * @param  \App\Like  $like
      * @return \Illuminate\Http\Response
      */
-    public function show(Post $post)
+    public function show(Like $like)
     {
         //
     }
@@ -54,10 +52,10 @@ class PostController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Post  $post
+     * @param  \App\Like  $like
      * @return \Illuminate\Http\Response
      */
-    public function edit(Post $post)
+    public function edit(Like $like)
     {
         //
     }
@@ -66,10 +64,10 @@ class PostController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Post  $post
+     * @param  \App\Like  $like
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Post $post)
+    public function update(Request $request, Like $like)
     {
         //
     }
@@ -77,10 +75,10 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Post  $post
+     * @param  \App\Like  $like
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Post $post)
+    public function destroy(Like $like)
     {
         //
     }

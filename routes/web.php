@@ -11,10 +11,10 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-Route::get('/app', function () {
-    return view('site/home.index');
-});
+
+// home page
+Route::get('/', 'Site\HomeController@index')->name('home');
+
+
+
 

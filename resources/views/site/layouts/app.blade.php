@@ -32,24 +32,26 @@
   <!-- Main Content -->
   <div class="container">
     <div class="row">
-      <div class="col-lg-8 col-md-8">
+      <div class="col-md-8">
           @yield('content')
         
          
          
-         
+        {{--  
         <hr>
         <!-- Pager -->
         <div class="clearfix">
           <a class="btn btn-primary float-right" href="#">Older Posts &rarr;</a>
         </div>
-      </div>
+      </div> --}}
 
-      <div class="col-md-4">
+      
+    </div>
+    <div class="col-md-4">
             @include('site.layouts.sidebar')
       </div>
-    </div>
   </div>
+</div>
 
   <hr>
 
