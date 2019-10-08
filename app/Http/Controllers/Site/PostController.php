@@ -2,11 +2,24 @@
 
 namespace App\Http\Controllers\Site;
 
+use App\Category;
 use App\Post;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Str;
+use Intervention\Image\Facades\Image;
 
 class PostController extends Controller
 {
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth')->except(['index','show']);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -15,7 +28,11 @@ class PostController extends Controller
     public function index()
     {
         $posts = Post::paginate(5);
-
+         if($month = request('month'))
+         {
+             $posts->whereMonth('created_at',$month);
+         }
+         
         return view('site.index',compact('posts'));
     }
 
@@ -26,7 +43,8 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        $categories = Category::all();
+        return view('site.posts/form',compact('categories'));
     }
 
     /**
@@ -37,7 +55,37 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //validate
+        $this->validate($request,array(
+            'title'=>'required|string|max:255',
+            'body'=>'required',
+            'category_id'=>'required|integer',
+            'image'=>'sometimes|image',
+            
+            
+        ));
+        $post = new Post();
+        $post->title = $request->title;
+        $post->slug = Str::slug($request->title);
+        $post->body = $request->body;
+        $post->user_id = auth()->user()->id;
+        $post->category_id = $request->category_id;
+        if ($request->image) {
+
+            Image::make($request->image)
+                ->resize(300, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                })
+                ->save(public_path('uploads/posts/' . $request->image->hashName()));
+
+                $post->image= $request->image->hashName();
+
+        }//end of if
+
+        $post->save();
+
+        // Session::flash('success','The blog post was successfully save!');
+        return redirect('/')->with('success','The blog post was successfully save!');
     }
 
     /**

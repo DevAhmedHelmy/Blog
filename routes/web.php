@@ -13,11 +13,17 @@
 
 
 // home page
-Route::get('/', 'Site\HomeController@index')->name('home');
+Route::get('/', 'Site\HomeController@index');
+
+// post
+Route::resource('/post', 'Site\PostController');
+
+// category
+Route::resource('/category', 'Site\CategoryController');
 
 
-
-
+// tag
+Route::resource('/tag', 'Site\TagController');
 
 Auth::routes();
 

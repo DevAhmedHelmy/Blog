@@ -4,9 +4,14 @@ namespace App\Http\Controllers\Site;
 
 use App\Category;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class CategoryController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +19,8 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        $categories = Category::all();
+        return view('site.category/index',compact('categories'));
     }
 
     /**
@@ -35,7 +41,14 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request,[
+            'name'=>'required|alpha_dash|max:255'
+        ]);
+        Category::create([
+            'name' => $request->name,
+            'user_id' => auth()->user()->id
+        ]);
+        return redirect()->back();
     }
 
     /**

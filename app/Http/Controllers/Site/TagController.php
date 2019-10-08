@@ -4,9 +4,13 @@ namespace App\Http\Controllers\Site;
 
 use App\Tag;
 use Illuminate\Http\Request;
-
+use App\Http\Controllers\Controller;
 class TagController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +18,8 @@ class TagController extends Controller
      */
     public function index()
     {
-        //
+        $tags = Tag::all();
+        return view('site.tags/index',compact('tags'));
     }
 
     /**
@@ -35,7 +40,14 @@ class TagController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request,[
+            'name'=>'required|alpha_dash|max:255'
+        ]);
+        Tag::create([
+            'name' => $request->name,
+            'user_id' => auth()->user()->id
+        ]);
+        return redirect()->back()->with('success','The blog Tag was successfully save!');
     }
 
     /**

@@ -59,5 +59,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Like::class);
     }
+    public function tags()
+    {
+       return $this->belongsToMany('App\Tag');
+    }
 
 }

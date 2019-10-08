@@ -18,16 +18,21 @@
 
 @endsection
 @section('content')
+	
 	@foreach($posts as $post)
 		<div class="post-preview">
 			<a href="post.html">
 			  	<h2 class="post-title">
 					{{ $post->title }}
-			  	</h2>
-			  	<h3 class="post-subtitle">
-					{{ $post->body }}
-			  	</h3>
+				</h2>
 			</a>
+			  	<p class="post-subtitle">
+					{{ $post->body }}
+				</p>
+				@foreach ($post->tags as $tag)
+					{{$tag->name}}
+				@endforeach
+			
 			<p class="post-meta">Posted by
 			  <a href="#">{{ $post->user->name }}</a>
 			  {{ $post->created_at }}</p>
