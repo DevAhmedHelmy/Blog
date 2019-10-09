@@ -32,7 +32,12 @@ class PostController extends Controller
          {
              $posts->whereMonth('created_at',$month);
          }
-         
+
+         if($year = request('year'))
+         {
+             $posts->whereYear('created_at',$year);
+         }
+
         return view('site.index',compact('posts'));
     }
 
@@ -96,7 +101,8 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        //
+        
+        return  view('site.posts/show',compact('post'));
     }
 
     /**

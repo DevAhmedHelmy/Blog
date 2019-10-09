@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Site;
 
 use App\Comment;
 use Illuminate\Http\Request;
-
+use App\Http\Controllers\Controller;
 class CommentController extends Controller
 {
     /**
@@ -35,7 +35,14 @@ class CommentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        
+
+        Comment::create([
+            'comment' => $request->comment,
+            'user_id' => auth()->user()->id,
+            'post_id' => $request->post_id
+        ]);
+        return redirect()->back()->with('success','The blog post was successfully save!');
     }
 
     /**

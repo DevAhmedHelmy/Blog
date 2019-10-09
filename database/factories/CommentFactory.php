@@ -9,8 +9,7 @@ use Faker\Generator as Faker;
 
 $factory->define(Comment::class, function (Faker $faker) {
     return [
-        'name' => $faker->name,
-        'email' => $faker->email,
+         
         'comment' => $faker->text,
         'approved' => 1,
         'post_id' => function(){

@@ -21,6 +21,8 @@ Route::resource('/post', 'Site\PostController');
 // category
 Route::resource('/category', 'Site\CategoryController');
 
+// comments
+Route::resource('/comment', 'Site\CommentController');
 
 // tag
 Route::resource('/tag', 'Site\TagController');
