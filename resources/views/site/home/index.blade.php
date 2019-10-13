@@ -29,9 +29,12 @@
 			  	<p class="post-subtitle">
 					{{ $post->body }}
 				</p>
-				@foreach ($post->tags as $tag)
-					{{$tag->name}}
-				@endforeach
+				<ul>
+					@foreach ($post->tags as $tag)
+						<li>{{$tag->name}}</li>
+					@endforeach
+				</ul>
+				
 			
 			<p class="post-meta">Posted by
 			  <a href="#">{{ $post->user->name }}</a>

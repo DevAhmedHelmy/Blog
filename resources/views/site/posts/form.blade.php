@@ -49,6 +49,19 @@
             <p class="help-block text-danger"></p>
             
             </div>
+            <div class="control-group">
+            
+                <label class="text-white mb-3 lead">Tags</label>
+                <!-- Multiselect dropdown -->
+                <select name="tags[]" multiple data-style="bg-white rounded-pill px-4 py-3 shadow-sm" class="selectpicker form-control">
+                    <option>Choose Tags</option>
+                    @foreach ($tags as $tag)
+                        <option value="{{$tag->id}}">{{$tag->name}}</option>
+                    @endforeach
+                </select><!-- End -->
+                <p class="help-block text-danger"></p>
+                
+            </div>
         <div class="form-group">
             
             <label for="image">Upload Image (optional)</label>
@@ -79,5 +92,8 @@
             }
 
         });
+        $(function () {
+    $('.selectpicker').selectpicker();
+});
     </script>    
 @endsection

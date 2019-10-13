@@ -6,6 +6,8 @@ use App\Category;
 use App\Post;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Tag;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
 
@@ -37,7 +39,7 @@ class PostController extends Controller
          {
              $posts->whereYear('created_at',$year);
          }
-
+          
         return view('site.index',compact('posts'));
     }
 
@@ -49,7 +51,8 @@ class PostController extends Controller
     public function create()
     {
         $categories = Category::all();
-        return view('site.posts/form',compact('categories'));
+        $tags = Tag::all();
+        return view('site.posts/form',compact('categories','tags'));
     }
 
     /**
@@ -60,6 +63,7 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
+        
         //validate
         $this->validate($request,array(
             'title'=>'required|string|max:255',
@@ -88,6 +92,7 @@ class PostController extends Controller
         }//end of if
 
         $post->save();
+        $post->tags()->sync($request->tags,FALSE);//wheter to override the extisting association
 
         // Session::flash('success','The blog post was successfully save!');
         return redirect('/')->with('success','The blog post was successfully save!');
@@ -101,6 +106,33 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
+
+        // $this->post = $post;
+        // $storage = Redis::connection();
+        // if($storage->zScore('postViews','post:'.$post)){
+        //     $storage->pipline(function($pipe){
+        //         $pipe->zIncrBy('postViews',1,'post'.$this->post);
+        //         $pipe->incr('post:'.$this->post.':views');
+        //     });
+            
+        // }else{
+        //     $views = $storage->incr('post:'.$this->post.':views');
+        //     $storage->zIncrBy('postViews',$views,'post'.$this->post);
+        // }
+        // $views = $storage->get('post:'.$this->post.':views');
+        // return $views;
+        if($post)
+        {
+            $views = Redis::pipeline(function($pipe) use ($post) {
+                $pipe->zIncrBy('postViews',1,'post'.$this->post);
+                $pipe->incr('post:'.$this->post.':views');
+            });
+          
+            $views = $views['1'];
+            $tags = Redis::sMembers('post:'.$post.':tags');
+        
+        }
+        
         
         return  view('site.posts/show',compact('post'));
     }
@@ -125,7 +157,7 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-        //
+        //$post->tags()->sync($request->tags);//wheter to override the extisting association //2ns param default TRUE
     }
 
     /**

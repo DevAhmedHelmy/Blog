@@ -20,6 +20,7 @@
 
   <!-- Custom styles for this template -->
   <link href="{{ asset('en/css/clean-blog.min.css') }}" rel="stylesheet">
+  <link href="{{ asset('en/css/bootstrap-select.min.css') }}" rel="stylesheet">
 
 </head>
 
@@ -64,7 +65,8 @@
 
   <!-- Custom scripts for this template -->
   <script src="">{{ asset('en/js/clean-blog.min.js') }}</script>
-  
+<script src="{{asset('en/js/bootstrap-select.min.js')}}"></script>
+
 
   @yield('js')
 </body>
