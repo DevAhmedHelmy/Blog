@@ -27,6 +27,10 @@ Route::resource('/comment', 'Site\CommentController');
 // tag
 Route::resource('/tag', 'Site\TagController');
 
+// filter Tag
+Route::get('/filter/{tag}', 'Site\PostController@filterTag');
+
+
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');

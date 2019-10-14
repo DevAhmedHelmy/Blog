@@ -106,9 +106,14 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
+        $id = $post->id;
+        $storage = Redis::connection();
+        $views = $storage->incr('post:'.$id.':views');
+        $storage->zIncrBy('postViews',1,'post:'.$id);
 
+        return $views;
         // $this->post = $post;
-        // $storage = Redis::connection();
+        // 
         // if($storage->zScore('postViews','post:'.$post)){
         //     $storage->pipline(function($pipe){
         //         $pipe->zIncrBy('postViews',1,'post'.$this->post);
@@ -121,17 +126,19 @@ class PostController extends Controller
         // }
         // $views = $storage->get('post:'.$this->post.':views');
         // return $views;
-        if($post)
-        {
-            $views = Redis::pipeline(function($pipe) use ($post) {
-                $pipe->zIncrBy('postViews',1,'post'.$this->post);
-                $pipe->incr('post:'.$this->post.':views');
-            });
+        // if($post)
+        // {
+        //     $views = Redis::pipeline(function($pipe) use ($post) {
+        //         $pipe->zIncrBy('postViews',1,'post'.$post);
+        //         $pipe->incr('post:'.$post.':views');
+        //     });
           
-            $views = $views['1'];
-            $tags = Redis::sMembers('post:'.$post.':tags');
+        //     $views = $views['1'];
+        //     $tags = Redis::sMembers('post:'.$post.':tags');
+        //     return $tags;
         
-        }
+        // }
+        
         
         
         return  view('site.posts/show',compact('post'));
@@ -170,4 +177,6 @@ class PostController extends Controller
     {
         //
     }
+
+    
 }

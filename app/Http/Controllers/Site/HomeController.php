@@ -12,11 +12,16 @@ class HomeController extends Controller
     
     public function index()
     {
-        \DB::connection()->enableQueryLog();
-        $post = new Post();
-        $posts = $post->getall();
-        $log = \DB::getQueryLog();
-       
+        // \DB::connection()->enableQueryLog();
+        // $post = new Post();
+        // $posts = $post->getall();
+        // $log = \DB::getQueryLog();
+        
+        $redis = Redis::connection();
+
+        $redis->set('key1','hello');
+        return $redis->get('key1');
+
         return view('site.home.index',compact('posts'));
     }
 }

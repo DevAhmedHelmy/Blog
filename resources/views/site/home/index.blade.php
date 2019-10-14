@@ -31,7 +31,7 @@
 				</p>
 				<ul>
 					@foreach ($post->tags as $tag)
-						<li>{{$tag->name}}</li>
+					<li><a href="/filter/{{$tag->id}}">{{$tag->name}}</a></li>
 					@endforeach
 				</ul>
 				
