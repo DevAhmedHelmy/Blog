@@ -10,7 +10,7 @@ use App\Tag;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
-
+use App\Repositories\Contracts\PostRepositoryInterface;
 class PostController extends Controller
 {
     /**
@@ -18,8 +18,10 @@ class PostController extends Controller
      *
      * @return void
      */
-    public function __construct()
+    private $postRepository;
+    public function __construct(PostRepositoryInterface $postRepository)
     {
+        $this->postRepository = $postRepository;
         $this->middleware('auth')->except(['index','show']);
     }
     /**
@@ -29,16 +31,11 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::paginate(5);
-         if($month = request('month'))
-         {
-             $posts->whereMonth('created_at',$month);
-         }
+         
 
-         if($year = request('year'))
-         {
-             $posts->whereYear('created_at',$year);
-         }
+        $posts = $this->postRepository->getAll();
+
+       
           
         return view('site.index',compact('posts'));
     }
@@ -92,7 +89,16 @@ class PostController extends Controller
         }//end of if
 
         $post->save();
-        $post->tags()->sync($request->tags,FALSE);//wheter to override the extisting association
+
+        if($request->tags)
+        {
+            foreach ($request->tags as $tag) {
+                Redis::zadd('post:tag'. $tag , $post->id,$post->id);
+                Redis::sadd('post'.$post->id, ':tag'.$tag);
+                Redis::sadd('post:tags',$tag);
+            }
+        }
+        // $post->tags()->sync($request->tags,FALSE);//wheter to override the extisting association
 
         // Session::flash('success','The blog post was successfully save!');
         return redirect('/')->with('success','The blog post was successfully save!');
@@ -106,12 +112,27 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        $id = $post->id;
-        $storage = Redis::connection();
-        $views = $storage->incr('post:'.$id.':views');
-        $storage->zIncrBy('postViews',1,'post:'.$id);
+        return $post->getViews($post->id);
+        // $id = $post->id;
+        // $this->post = $post;
+        // $storage = Redis::connection();
+        // if($storage->zScore('postViews','post:'.$this->post))
+        // {
+        //     $storage->pipeline(function($pipe){
+        //         $pipe->zIncrBy('postViews',1,'post:'.$this->post);
+        //         $pipe->incr('post:'.$this->post.':views');
+        //     });
+            
+        // }else {
+        //     $views = $storage->incr('post:'.$this->post.':views');
+        //     $storage->zIncrBy('postViews',$views,'post:'.$this->post);
+            
+        // }
+        
+        // $views = $storage->get('post:'.$this->post.':views');
+        // return $views;
 
-        return $views;
+        
         // $this->post = $post;
         // 
         // if($storage->zScore('postViews','post:'.$post)){
