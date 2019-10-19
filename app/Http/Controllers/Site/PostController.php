@@ -94,7 +94,7 @@ class PostController extends Controller
         {
             foreach ($request->tags as $tag) {
                 Redis::zadd('post:tag'. $tag , $post->id,$post->id);
-                Redis::sadd('post'.$post->id, ':tag'.$tag);
+                Redis::sadd('post:'. $post->id . ':tags' ,$tag);
                 Redis::sadd('post:tags',$tag);
             }
         }
@@ -112,57 +112,30 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        return $post->getViews($post->id);
-        // $id = $post->id;
-        // $this->post = $post;
-        // $storage = Redis::connection();
-        // if($storage->zScore('postViews','post:'.$this->post))
-        // {
-        //     $storage->pipeline(function($pipe){
-        //         $pipe->zIncrBy('postViews',1,'post:'.$this->post);
-        //         $pipe->incr('post:'.$this->post.':views');
-        //     });
+        $post = $this->postRepository->get($post);
+        // $viewsCounter = $this->postRepository->getViews($post->id);
+         
+        if($post)
+        {
+            $this->id = $post->id;
+             
             
-        // }else {
-        //     $views = $storage->incr('post:'.$this->post.':views');
-        //     $storage->zIncrBy('postViews',$views,'post:'.$this->post);
-            
-        // }
-        
-        // $views = $storage->get('post:'.$this->post.':views');
-        // return $views;
+            $views = Redis::pipeline(function($pipe){
+                $pipe->zIncrBy('postViews',1,'post:'.$this->id);
+                $pipe->incr('post:'.$this->id.':views');
+            });
 
-        
-        // $this->post = $post;
-        // 
-        // if($storage->zScore('postViews','post:'.$post)){
-        //     $storage->pipline(function($pipe){
-        //         $pipe->zIncrBy('postViews',1,'post'.$this->post);
-        //         $pipe->incr('post:'.$this->post.':views');
-        //     });
             
-        // }else{
-        //     $views = $storage->incr('post:'.$this->post.':views');
-        //     $storage->zIncrBy('postViews',$views,'post'.$this->post);
-        // }
-        // $views = $storage->get('post:'.$this->post.':views');
-        // return $views;
-        // if($post)
-        // {
-        //     $views = Redis::pipeline(function($pipe) use ($post) {
-        //         $pipe->zIncrBy('postViews',1,'post'.$post);
-        //         $pipe->incr('post:'.$post.':views');
-        //     });
-          
-        //     $views = $views['1'];
-        //     $tags = Redis::sMembers('post:'.$post.':tags');
-        //     return $tags;
+            $views = $views['1'];
+
+            $tags = Redis::sMembers('post:'. $post->id . ':tags');
+            return $tags;
+            return  view('site.posts/show',compact('post','views','tags'));
+
+        }
+
+        return "404";
         
-        // }
-        
-        
-        
-        return  view('site.posts/show',compact('post'));
     }
 
     /**

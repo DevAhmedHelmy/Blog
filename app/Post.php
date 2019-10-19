@@ -5,50 +5,9 @@ namespace App;
 use App\User;
 use Cache;
 use Illuminate\Support\Facades\Redis;
+ 
 class Post extends Model
 {
-
-    public $storage;
-
-    public function __construct()
-    {
-        $this->storage = Redis::connection();
-    }
-
-    // to get all data from database
-    public function getall()
-    {
-        $result = Cache::remember('post_blog_cache', 1, function () {
-            return Post::paginate(5);
-            // return \DB::table('posts')->paginate(5);
-        });
-        return $result;
-    }
-
-    // to show 
-
-    public function fetch($id)
-    {
-        $this->id = $id;
-         
-        
-        $this->storage->pipeline(function($pipe){
-            $pipe->zIncrBy('postViews',1,'post:'.$this->id);
-            $pipe->incr('post:'.$this->id.':views');
-        });
-            
-       return $this->where('id',$id)->first();
-    }
-
-    // to view count of post views
-    public function getViews($id)
-    {
-        $views = $this->storage->get('post:'.$id.':views');
-        return $views;
-    }
-
-
-    
 
     public function category()
     {

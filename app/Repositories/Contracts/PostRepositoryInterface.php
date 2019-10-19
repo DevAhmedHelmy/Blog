@@ -17,7 +17,7 @@ interface PostRepositoryInterface
 
 	public function update(Post $post);
 
-
+	public function getViews($id);
 
 
 }
