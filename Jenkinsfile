@@ -14,10 +14,6 @@ node('master') {
             // Run any static asset building, if needed
             // sh "npm install && gulp --production"
         }
-        stage('test') {
-            // Run any testing suites
-            sh "./vendor/bin/phpunit"
-        }
 
         stage('deploy') {
             // If we had ansible installed on the server, setup to run an ansible playbook
