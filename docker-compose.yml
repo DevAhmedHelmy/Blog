@@ -26,7 +26,7 @@ services:
       MYSQL_USER: root
       MYSQL_PASSWORD: root
     ports:
-     - 3308:3308
+     - "8088:3306"
     networks:
      - appnet
     volumes:
@@ -42,7 +42,6 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       PMA_HOST: db
-      PMA_PORT: 3308
       PMA_ARBITRARY: 1
     restart: always
     ports:
